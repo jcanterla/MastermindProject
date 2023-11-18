@@ -1,4 +1,5 @@
 import cv2
+import random
 
 img = cv2.imread("mastermind_logorigin.png")
 
@@ -26,4 +27,28 @@ def cambio_imagen():
     return cambio_imagen
 
 
-print(cambio_imagen())
+cambio_imagen()
+
+
+def generacion():
+    numaleatorio = {
+        1:random.randint(0,9),
+        2:random.randint(0,9),
+        3:random.randint(0,9),
+        4:random.randint(0,9),
+        5:random.randint(0,9)
+    }
+    list = []
+    for a in range(1,6):
+        numero = numaleatorio.get(a)
+        list.append(numero)
+        numerogenerado = "".join(map(str, list))
+    with open("palabras.dat", "rb") as f:
+        palabra = f.readlines()
+    elemento = random.randint(1,24)
+    palabra2 = palabra[elemento].decode("utf-8").strip()
+    print(palabra2)
+    print(numerogenerado)
+    
+
+print(generacion())
