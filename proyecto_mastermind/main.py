@@ -1,6 +1,7 @@
 import cv2
 import random
 
+
 img = cv2.imread("mastermind_logorigin.png")
 
 
@@ -31,6 +32,8 @@ cambio_imagen()
 
 
 def generacion():
+    global palabra2
+    global numerogenerado
     numaleatorio = {
         1:random.randint(0,9),
         2:random.randint(0,9),
@@ -46,9 +49,25 @@ def generacion():
     with open("palabras.dat", "rb") as f:
         palabra = f.readlines()
     elemento = random.randint(1,24)
+
     palabra2 = palabra[elemento].decode("utf-8").strip()
     print(palabra2)
     print(numerogenerado)
-    
 
-print(generacion())
+def masternumeros():
+    print("Hola")
+def masterpalabras():
+    print("\t\t¡Tienes 7 intentos!\n\t\t\t¡Comenzamos!")
+
+    palabra = palabra2
+    print(palabra)
+    separar = []
+    for letra in range(len(palabra)):
+        separar.append(letra)
+    print(separar)
+
+
+
+
+generacion()
+masterpalabras()
