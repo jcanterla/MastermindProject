@@ -62,11 +62,35 @@ def masterpalabras():
     palabra = palabra2
     print(palabra)
     separar = []
-    for letra in range(len(palabra)):
+    for letra in palabra:
         separar.append(letra)
-    print(separar)
+    intentos = 7
+    intentos_realizados = 0
 
+    while intentos_realizados < intentos:
+        palabra3 = len(palabra2)
+        guiones = []
 
+        for contar in range(palabra3):
+            guiones.append("-")
+        print(guiones)
+        
+        caracter = input("Introduce la palabra que crees que es: ")
+        almacen = []
+        for letra2 in caracter:
+            almacen.append(letra2)
+        caractAlma = len(almacen)
+        for i in range(caractAlma):
+            if almacen[i] == separar[i]:
+                almacen[i] = "o"
+            else:
+                almacen[i] = "-"
+        print(almacen)
+        intentos_realizados += 1
+
+        if palabra == caracter:
+            print("Felicidades")
+            break
 
 
 generacion()
