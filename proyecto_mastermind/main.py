@@ -1,6 +1,7 @@
 import cv2
 import random
-
+from datetime import datetime
+import time
 
 img = cv2.imread("mastermind_logorigin.png")
 
@@ -56,10 +57,13 @@ def generacion():
 
 
 def masterpalabras():
-    print("\033[1m" + "APLICACIÓN MASTERMIND" + "\033[0m")
-    nombre = input("Tu nickname, por favor: ")
-    print("¡Comienza el juego para {}".format(nombre))
-
+    partidas = 0
+    rellenado = False
+    while not rellenado:
+        print("\033[1m" + "APLICACIÓN MASTERMIND" + "\033[0m")
+        nombre = input("Tu nickname, por favor: ")
+        print("¡Comienza el juego para {}!".format(nombre))
+        rellenado = True
     secuencia = int()
     if secuencia == int:
         longitud_combinacion = 4
@@ -103,10 +107,11 @@ def masterpalabras():
         print("")
 
     else:
+        inicio = time.time()
         print("\033[1m" + "APLICACIÓN MASTERMIND" + "\033[0m")
         print()
         print("\t\t¡Tienes 7 intentos!\n\t\t\t¡Comenzamos!")
-
+        partidas += 1
         palabra = palabra2
         print(palabra)
         separar = []
@@ -131,18 +136,28 @@ def masterpalabras():
                     almacen[i] = "x"
             print(almacen)
             intentos_realizados += 1
-
+            fecha = datetime.now()
             if palabra == caracter:
                 print("Has adivinado la combinación")
                 print("¡En {} intentos!".format(intentos_realizados))
                 volver = input("¿Volvemos a jugar (S/N)? ")
-                if volver == "S":
+                conseguido = True
+                if volver == "S" or volver == "s":
                     generacion()
                     masterpalabras()
-
-                else:
+                elif volver == "N" or volver == "n":
+                    fin = time.time()
+                    tiempo = fin - inicio
+                    datos_partida = {'fecha':fecha, 'numero':partidas, 'combinacion':palabra,'intentos':intentos_realizados, 'tiempo':tiempo, 'conseguido':conseguido}
+                    with open('partidas.txt', 'a') as f:
+                        f.writelines(f"{datos_partida}\n")
                     break
-
-
+        conseguido = False
+        datos_partida = {'fecha': fecha, 'numero': partidas, 'combinacion': palabra, 'intentos': intentos_realizados,'tiempo': tiempo, 'conseguido': conseguido}
+        with open('partidas.txt', 'a') as f:
+            f.writelines(f"{datos_partida}\n")
+        print("Máximos de intentos realizados")
 generacion()
 masterpalabras()
+def ranking():
+    pass
