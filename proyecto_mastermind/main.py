@@ -2,7 +2,7 @@ import cv2
 import random
 from datetime import datetime
 import time
-
+from stegano import lsb
 img = cv2.imread("mastermind_logorigin.png")
 
 
@@ -32,9 +32,7 @@ def cambio_imagen():
 cambio_imagen()
 
 
-def generacion():
-    global palabra2
-    global numerogenerado
+def generacionocultacion():
     numaleatorio = {
         1:random.randint(0,9),
         2:random.randint(0,9),
@@ -52,10 +50,16 @@ def generacion():
     elemento = random.randint(1,24)
 
     palabra2 = palabra[elemento].decode("utf-8").strip()
-    print(palabra2)
-    print(numerogenerado)
 
+    secreto = lsb.hide("mastermind.png", palabra2)
+    secreto2 = lsb.hide("mastermind.png", numerogenerado)
+    secreto.save("mastermindsecreto.png")
+    secreto2.save("mastermindsecreto2.png")
+    palabrarevelada = lsb.reveal("mastermindsecreto.png")
+    numerorevelado = lsb.reveal("mastermindsecreto2.png")
 
+    print(palabrarevelada)
+    print(numerorevelado)
 def masterpalabras():
     partidas = 0
     rellenado = False
@@ -157,7 +161,8 @@ def masterpalabras():
         with open('partidas.txt', 'a') as f:
             f.writelines(f"{datos_partida}\n")
         print("Máximos de intentos realizados")
-generacion()
+generacionocultacion()
 masterpalabras()
+
 def ranking():
     pass
