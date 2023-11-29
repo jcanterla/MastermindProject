@@ -1,0 +1,2 @@
+{'fecha': datetime.datetime(2023, 11, 29, 19, 37, 31, 540803), 'numero': 1, 'combinacion': 'gazpacho', 'intentos': 1, 'tiempo': 7.056251764297485, 'conseguido': True}
+{'fecha': datetime.datetime(2023, 11, 29, 19, 37, 31, 540803), 'numero': 1, 'combinacion': 'gazpacho', 'intentos': 1, 'tiempo': 7.056251764297485, 'conseguido': False}

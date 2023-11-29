@@ -60,18 +60,21 @@ def generacionocultacion():
 
     print(palabrarevelada)
     print(numerorevelado)
+    return palabrarevelada, numerorevelado
 def masterpalabras():
     partidas = 0
     rellenado = False
     while not rellenado:
         print("\033[1m" + "APLICACIÓN MASTERMIND" + "\033[0m")
         nombre = input("Tu nickname, por favor: ")
+        respuestajuego = input("¿Quieres jugar con números o palabras? (indica con N/P) ")
         print("¡Comienza el juego para {}!".format(nombre))
         rellenado = True
-    secuencia = int()
-    if secuencia == int:
-        longitud_combinacion = 4
-        combinacion = numerogenerado
+    if respuestajuego == 'n' or respuestajuego == 'N':
+        palabrarevelada, numerorevelado = generacionocultacion()
+        inicio = time.time()
+        longitud_combinacion = 5
+        combinacion = numerorevelado
         max_intentos = 10
         intentos = 0
         while intentos < max_intentos:
@@ -94,13 +97,22 @@ def masterpalabras():
 
             if verificacion == 'o' * longitud_combinacion:
                 print("¡Felicidades! Has adivinado la combinación secreta: {}".format(''.join(combinacion)))
-                break
+                volver = input("¿Quieres volver a jugar? ")
+                if volver == "S" or volver == "s":
+                    masterpalabras()
+                elif volver == "N" or volver == "n":
+                    print("Volver al juego")
 
             intentos += 1
 
         if intentos == max_intentos:
             print("Lo siento, has alcanzado el número máximo de intentos. La combinación secreta era: {}".format(
                 ''.join(combinacion)))
+            volver = input("¿Quieres volver a jugar? ")
+            if volver == "S" or volver == "s":
+                masterpalabras()
+            elif volver == "N" or volver == "n":
+                print("Fin del juego")
 
         print("Bienvenido al juego de combinación secreta. Adivina la combinación de {} números.".format(
             longitud_combinacion))
@@ -110,13 +122,14 @@ def masterpalabras():
         print("x = número incorrecto")
         print("")
 
-    else:
+    elif respuestajuego == 'P' or respuestajuego == 'p':
+        palabrarevelada, numerorevelado = generacionocultacion()
         inicio = time.time()
         print("\033[1m" + "APLICACIÓN MASTERMIND" + "\033[0m")
         print()
         print("\t\t¡Tienes 7 intentos!\n\t\t\t¡Comenzamos!")
         partidas += 1
-        palabra = palabra2
+        palabra = palabrarevelada
         print(palabra)
         separar = []
         for letra in palabra:
@@ -138,6 +151,7 @@ def masterpalabras():
                     almacen[i] = "-"
                 else:
                     almacen[i] = "x"
+            almacen = " ".join(almacen)
             print(almacen)
             intentos_realizados += 1
             fecha = datetime.now()
@@ -147,7 +161,6 @@ def masterpalabras():
                 volver = input("¿Volvemos a jugar (S/N)? ")
                 conseguido = True
                 if volver == "S" or volver == "s":
-                    generacion()
                     masterpalabras()
                 elif volver == "N" or volver == "n":
                     fin = time.time()
@@ -161,7 +174,7 @@ def masterpalabras():
         with open('partidas.txt', 'a') as f:
             f.writelines(f"{datos_partida}\n")
         print("Máximos de intentos realizados")
-generacionocultacion()
+palabrarevelada, numerorevelado = generacionocultacion()
 masterpalabras()
 
 def ranking():
