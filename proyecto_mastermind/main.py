@@ -3,6 +3,8 @@ import random
 from datetime import datetime
 import time
 from stegano import lsb
+
+
 img = cv2.imread("mastermind_logorigin.png")
 
 
@@ -31,8 +33,11 @@ def cambio_imagen():
 
 cambio_imagen()
 
+########################################################################################################################
+
 
 def generacionocultacion():
+
     numaleatorio = {
         1:random.randint(0,9),
         2:random.randint(0,9),
@@ -61,121 +66,90 @@ def generacionocultacion():
     print(palabrarevelada)
     print(numerorevelado)
     return palabrarevelada, numerorevelado
-def masterpalabras():
-    partidas = 0
-    rellenado = False
-    while not rellenado:
-        print("\033[1m" + "APLICACIÓN MASTERMIND" + "\033[0m")
-        nombre = input("Tu nickname, por favor: ")
-        respuestajuego = input("¿Quieres jugar con números o palabras? (indica con N/P) ")
-        print("¡Comienza el juego para {}!".format(nombre))
-        rellenado = True
-    if respuestajuego == 'n' or respuestajuego == 'N':
-        palabrarevelada, numerorevelado = generacionocultacion()
-        inicio = time.time()
-        longitud_combinacion = 5
-        combinacion = numerorevelado
-        max_intentos = 10
-        intentos = 0
-        while intentos < max_intentos:
-            intento = input("Introduce tu intento ({} dígitos): ".format(longitud_combinacion))
 
-            if len(intento) != longitud_combinacion or not intento.isdigit():
-                print("Por favor, introduce {} números.".format(longitud_combinacion))
-                continue
+########################################################################################################################
 
-            verificacion = ""
-            for i in range(longitud_combinacion):
-                if intento[i] == combinacion[i]:
-                    verificacion += "o"
-                elif intento[i] in combinacion:
-                    verificacion += "-"
-                else:
-                    verificacion += "x"
 
-            print("Resultado del intento {}: {}".format(intentos + 1, verificacion))
-
-            if verificacion == 'o' * longitud_combinacion:
-                print("¡Felicidades! Has adivinado la combinación secreta: {}".format(''.join(combinacion)))
-                volver = input("¿Quieres volver a jugar? ")
-                if volver == "S" or volver == "s":
-                    masterpalabras()
-                elif volver == "N" or volver == "n":
-                    print("Volver al juego")
-
-            intentos += 1
-
-        if intentos == max_intentos:
-            print("Lo siento, has alcanzado el número máximo de intentos. La combinación secreta era: {}".format(
-                ''.join(combinacion)))
-            volver = input("¿Quieres volver a jugar? ")
-            if volver == "S" or volver == "s":
-                masterpalabras()
-            elif volver == "N" or volver == "n":
-                print("Fin del juego")
-
-        print("Bienvenido al juego de combinación secreta. Adivina la combinación de {} números.".format(
-            longitud_combinacion))
-        print("Recibirás indicadores 'o', '-', 'x' después de cada dígito introducido.")
-        print("o = número correcto en el lugar correcto")
-        print("- = número correcto en el lugar incorrecto")
-        print("x = número incorrecto")
-        print("")
-
-    elif respuestajuego == 'P' or respuestajuego == 'p':
-        palabrarevelada, numerorevelado = generacionocultacion()
-        inicio = time.time()
-        print("\033[1m" + "APLICACIÓN MASTERMIND" + "\033[0m")
-        print()
-        print("\t\t¡Tienes 7 intentos!\n\t\t\t¡Comenzamos!")
-        partidas += 1
-        palabra = palabrarevelada
-        print(palabra)
-        separar = []
-        for letra in palabra:
-            separar.append(letra)
-
-        intentos = 7
+def masterpalabras(palabrarevelada, numerorevelado):
+    fecha = datetime.now()
+    print("\033[1m" + "APLICACIÓN MASTERMIND" + "\033[0m")
+    nombre = input("Tu nickname, por favor: ")
+    jugar = ""
+    while jugar != "P" and jugar != "p" and jugar != "N" and jugar != "n":
+        jugar = input("¿Qué quieres jugar a palabras o a números? (P/N): ")
+    print("¡Comienza el juego para {}!".format(nombre))
+    volver = "S"
+    numero_partidas = 0
+    conseguido = False
+    while volver == "S" or volver == "s":
+        numero_partidas += 1
         intentos_realizados = 0
-
-        while intentos_realizados < intentos:
-
-            caracter = input("Introduce la palabra que crees que es: ")
-            almacen = []
-            for letra2 in caracter:
-                almacen.append(letra2)
-            for i in range(len(almacen)):
-                if almacen[i] == separar[i]:
-                    almacen[i] = "o"
-                elif almacen[i] in separar:
-                    almacen[i] = "-"
-                else:
-                    almacen[i] = "x"
-            almacen = " ".join(almacen)
-            print(almacen)
-            intentos_realizados += 1
-            fecha = datetime.now()
-            if palabra == caracter:
-                print("Has adivinado la combinación")
-                print("¡En {} intentos!".format(intentos_realizados))
-                volver = input("¿Volvemos a jugar (S/N)? ")
-                conseguido = True
-                if volver == "S" or volver == "s":
-                    masterpalabras()
-                elif volver == "N" or volver == "n":
-                    fin = time.time()
-                    tiempo = fin - inicio
-                    datos_partida = {'fecha':fecha, 'numero':partidas, 'combinacion':palabra,'intentos':intentos_realizados, 'tiempo':tiempo, 'conseguido':conseguido}
-                    with open('partidas.txt', 'a') as f:
-                        f.writelines(f"{datos_partida}\n")
+        tiempo = time.time()
+        if jugar == "N" or jugar == "n":
+            intentos = 4
+            while intentos > intentos_realizados:
+                intentos_realizados += 1
+                numero_ingresado = input("Ingresa un número de 5 cifras: ")
+                resultado = ""
+                for e in range(5):
+                    if numero_ingresado[e] == numerorevelado[e]:
+                        resultado += 'o'
+                    elif numero_ingresado[e] in numerorevelado:
+                        resultado += '-'
+                    else:
+                        resultado += 'x'
+                print(resultado)
+                if numero_ingresado == numerorevelado:
+                    print("¡Has adivinado la combinación!")
+                    print("¡En {} intentos!".format(intentos_realizados))
+                    conseguido = True
                     break
-        conseguido = False
-        datos_partida = {'fecha': fecha, 'numero': partidas, 'combinacion': palabra, 'intentos': intentos_realizados,'tiempo': tiempo, 'conseguido': conseguido}
-        with open('partidas.txt', 'a') as f:
-            f.writelines(f"{datos_partida}\n")
-        print("Máximos de intentos realizados")
+                elif intentos_realizados == 4:
+                    print("¡Has agotado los intentos!")
+                    break
+
+
+        elif jugar == "P" or jugar == "p":
+            intentos = 7
+            while intentos > intentos_realizados:
+                intentos_realizados += 1
+                palabra_ingresada = input("Ingresa una palabra de 8 caracteres: ")
+                resultado = ""
+                for e in range(8):
+                    if palabra_ingresada[e] == palabrarevelada[e]:
+                        resultado += 'o'
+                    elif palabra_ingresada[e] in palabrarevelada:
+                        resultado += '-'
+                    else:
+                        resultado += 'x'
+                print(resultado)
+                if palabra_ingresada == palabrarevelada:
+                    print("¡Has adivinado la combinación!")
+                    print("¡En {} intentos!".format(intentos_realizados))
+                    conseguido = True
+                    break
+                elif intentos_realizados == 7:
+                    print("¡Has agotado los intentos!")
+                    break
+
+        fin = time.time()
+        tiempo_total = fin - tiempo
+        volver = input("¿Quieres volver a jugar, si o no?(S/N): ")
+        if jugar == "N":
+            combinacion = numerorevelado
+        else:
+            combinacion = palabrarevelada
+        datos_partida = {"fecha": fecha, "numero": numero_partidas, "combinación": combinacion,
+                         "intentos": intentos_realizados,
+                         "tiempo": tiempo_total, "conseguido": conseguido}
+        print(datos_partida)
+        palabrarevelada, numerorevelado = generacionocultacion()
+
+
+
 palabrarevelada, numerorevelado = generacionocultacion()
-masterpalabras()
+masterpalabras(palabrarevelada, numerorevelado)
+
 
 def ranking():
     pass
