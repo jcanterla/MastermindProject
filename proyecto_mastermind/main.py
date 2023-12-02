@@ -116,6 +116,7 @@ def masterpalabras(palabrarevelada, numerorevelado):
                         break
                     elif intentos_realizados == 4:
                         print("¡Has agotado los intentos!")
+                        conseguido = False
                         break
 
 
@@ -144,6 +145,7 @@ def masterpalabras(palabrarevelada, numerorevelado):
                         break
                     elif intentos_realizados == 7:
                         print("¡Has agotado los intentos!")
+                        conseguido = False
                         break
 
         fin = time.time()
@@ -154,8 +156,9 @@ def masterpalabras(palabrarevelada, numerorevelado):
         else:
             combinacion = palabrarevelada
         lista_final = [fecha, numero_partidas, combinacion, intentos_realizados, tiempo_total, conseguido]
-        lista_final2 = [nombre, fecha, numero_partidas, combinacion, intentos_realizados, tiempo_total, conseguido]
-        lista_final3.append(lista_final2)
+        if conseguido == True:
+            lista_final2 = [nombre, fecha, numero_partidas, combinacion, intentos_realizados, tiempo_total, conseguido]
+            lista_final3.append(lista_final2)
         with open("partidas.txt", "a") as partidas:
             partidas.writelines(f"{lista_final}\n")
         palabrarevelada, numerorevelado = generacionocultacion()
@@ -180,10 +183,8 @@ def ranking():
         with open("ranking.dat", "rb") as datos2:
             lista_final4 = pickle.load(datos2)
         lista_final4.append(lista_final3)
-        print(lista_final4)
         with open("ranking.dat", "wb") as datos:
             pickle.dump(lista_final4, datos)
-
     except:
         with open("ranking.dat", "wb") as datos:
             pickle.dump(lista_final4, datos)
@@ -202,10 +203,12 @@ def ranking():
              'intento': intento, 'tiempo': tiempos, 'conseguido': conseguidos}
 
     df = pd.DataFrame(datos)
-
-    print(nombres)
-    print(df)
-
+    df_ordenado = df.sort_values(by=['intento', 'tiempo'])
+    print(df_ordenado.head(10).to_string(index=False))
 
 ranking()
+
+def pdf():
+    pass
+
 
