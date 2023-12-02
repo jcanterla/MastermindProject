@@ -5,8 +5,11 @@ import time
 
 import pandas as pd
 from stegano import lsb
-import pandas
 import pickle
+
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
+from reportlab.lib import colors
 
 
 img = cv2.imread("mastermind_logorigin.png")
@@ -35,7 +38,7 @@ def cambio_imagen():
     return cambio_imagen
 
 
-cambio_imagen()
+
 
 ########################################################################################################################
 
@@ -165,8 +168,7 @@ def masterpalabras(palabrarevelada, numerorevelado):
 
 
 
-palabrarevelada, numerorevelado = generacionocultacion()
-masterpalabras(palabrarevelada, numerorevelado)
+
 
 def ranking():
     lista_final4 = []
@@ -206,9 +208,43 @@ def ranking():
     df_ordenado = df.sort_values(by=['intento', 'tiempo'])
     print(df_ordenado.head(10).to_string(index=False))
 
-ranking()
 
 def pdf():
-    pass
+    doc = canvas.Canvas("partidas.pdf")
+    doc.drawInlineImage("mastermind.png", 150, 600, width=300, height=200)
+    color_subrayado = colors.gray
+    doc.setFillColor(colors.black)
+    doc.setFont("Helvetica", 14)
+    doc.drawCentredString(165, 550, "INFORME DE LA PARTIDAS")
+    doc.rect(165, 550, doc.stringWidth("INFORME DE LAS PARTIDAS", "Helvetica-Bold", 20), 20, fill=True)
+    doc.setFillColor(color_subrayado)
+    doc.save()
+
+while True:
+    print("APLICACIÓN MASTENMIND")
+    print("1) Creación del logo de equipo")
+    print("2) Generación y ocultado de la combinación")
+    print("3) Juego Mastermind")
+    print("4) Ranking de récords")
+    print("5) Informe de las partidas (PDF)")
+    print("6) Salir")
+
+    opcion = input("Opción: ")
+
+    if opcion == "1":
+        cambio_imagen()
+    elif opcion == "2":
+        generacionocultacion()
+    elif opcion == "3":
+        palabrarevelada, numerorevelado = generacionocultacion()
+        masterpalabras(palabrarevelada, numerorevelado)
+    elif opcion == "4":
+        ranking()
+    elif opcion == "5":
+        pdf()
+    elif opcion == "6":
+        salir()
+    else:
+        print("Opción inválida. Intente nuevamente.")
 
 

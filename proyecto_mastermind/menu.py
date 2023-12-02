@@ -63,29 +63,5 @@ def salir():
     sys.exit()
 
 # Visualización del menú en la pantalla
-while True:
-    print("APLICACIÓN MASTENMIND")
-    print("1) Creación del logo de equipo")
-    print("2) Generación y ocultado de la combinación")
-    print("3) Juego Mastermind")
-    print("4) Ranking de récords")
-    print("5) Informe de las partidas (PDF)")
-    print("6) Salir")
 
-    opcion = input("Opción: ")
-
-    if opcion == "1":
-        cambio_imagen()
-    elif opcion == "2":
-        generacion()
-    elif opcion == "3":
-        juego()
-    elif opcion == "4":
-        ranking()
-    elif opcion == "5":
-        informe()
-    elif opcion == "6":
-        salir()
-    else:
-        print("Opción inválida. Intente nuevamente.")
 
