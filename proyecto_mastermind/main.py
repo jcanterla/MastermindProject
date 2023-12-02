@@ -1,6 +1,6 @@
 import cv2
 import random
-from datetime import datetime
+from datetime import date
 import time
 
 import pandas as pd
@@ -77,7 +77,7 @@ def generacionocultacion():
 def masterpalabras(palabrarevelada, numerorevelado):
     global lista_final3
     lista_final3 = []
-    fecha = datetime.now()
+    fecha = date.today()
     print("\033[1m" + "APLICACIÓN MASTERMIND" + "\033[0m")
     nombre = input("Tu nickname, por favor: ")
     jugar = ""
@@ -167,16 +167,7 @@ masterpalabras(palabrarevelada, numerorevelado)
 
 def ranking():
     lista_final4 = []
-    try:
-        with open("ranking.dat", "rb") as datos2:
-            lista_final4 = pickle.load(datos2)
-        lista_final4.append(lista_final3)
-        with open("ranking.dat", "wb") as datos:
-            pickle.dump(lista_final4, datos)
-    except:
-        pass
-    with open("ranking.dat", "wb") as datos:
-        pickle.dump(lista_final3, datos)
+    lista_final4.append(lista_final3)
     nombres = []
     fechas = []
     numero_part = []
@@ -184,18 +175,37 @@ def ranking():
     intento = []
     tiempos = []
     conseguidos = []
+
+    try:
+        with open("ranking.dat", "rb") as datos2:
+            lista_final4 = pickle.load(datos2)
+        lista_final4.append(lista_final3)
+        print(lista_final4)
+        with open("ranking.dat", "wb") as datos:
+            pickle.dump(lista_final4, datos)
+
+    except:
+        with open("ranking.dat", "wb") as datos:
+            pickle.dump(lista_final4, datos)
+
     for u in lista_final4:
-        nombres.append(u[0])
-        fechas.append(u[1])
-        numero_part.append(u[2])
-        combinaciones.append(u[3])
-        intento.append(u[4])
-        tiempos.append(u[5])
-        conseguidos.append(u[6])
-    datos = {'Nombre':nombres, 'fecha':fechas}
+        for e in u:
+            nombres.append(e[0])
+            fechas.append(e[1])
+            numero_part.append(e[2])
+            combinaciones.append(e[3])
+            intento.append(e[4])
+            tiempos.append(e[5])
+            conseguidos.append(e[6])
+
+    datos = {'Nombre': nombres, 'fecha': fechas, 'numero': numero_part, 'combinacion': combinaciones,
+             'intento': intento, 'tiempo': tiempos, 'conseguido': conseguidos}
 
     df = pd.DataFrame(datos)
 
+    print(nombres)
     print(df)
+
+
 ranking()
 
