@@ -2,7 +2,11 @@ import cv2
 import random
 from datetime import datetime
 import time
+
+import pandas as pd
 from stegano import lsb
+import pandas
+import pickle
 
 
 img = cv2.imread("mastermind_logorigin.png")
@@ -71,6 +75,8 @@ def generacionocultacion():
 
 
 def masterpalabras(palabrarevelada, numerorevelado):
+    global lista_final3
+    lista_final3 = []
     fecha = datetime.now()
     print("\033[1m" + "APLICACIÓN MASTERMIND" + "\033[0m")
     nombre = input("Tu nickname, por favor: ")
@@ -91,22 +97,26 @@ def masterpalabras(palabrarevelada, numerorevelado):
                 intentos_realizados += 1
                 numero_ingresado = input("Ingresa un número de 5 cifras: ")
                 resultado = ""
-                for e in range(5):
-                    if numero_ingresado[e] == numerorevelado[e]:
-                        resultado += 'o'
-                    elif numero_ingresado[e] in numerorevelado:
-                        resultado += '-'
-                    else:
-                        resultado += 'x'
-                print(resultado)
-                if numero_ingresado == numerorevelado:
-                    print("¡Has adivinado la combinación!")
-                    print("¡En {} intentos!".format(intentos_realizados))
-                    conseguido = True
-                    break
-                elif intentos_realizados == 4:
-                    print("¡Has agotado los intentos!")
-                    break
+                if len(numero_ingresado) != len(numerorevelado):
+                    print("Número no válido")
+                    intentos_realizados -= 1
+                else:
+                    for e in range(5):
+                        if numero_ingresado[e] == numerorevelado[e]:
+                            resultado += 'o'
+                        elif numero_ingresado[e] in numerorevelado:
+                            resultado += '-'
+                        else:
+                            resultado += 'x'
+                    print(resultado)
+                    if numero_ingresado == numerorevelado:
+                        print("¡Has adivinado la combinación!")
+                        print("¡En {} intentos!".format(intentos_realizados))
+                        conseguido = True
+                        break
+                    elif intentos_realizados == 4:
+                        print("¡Has agotado los intentos!")
+                        break
 
 
         elif jugar == "P" or jugar == "p":
@@ -115,34 +125,39 @@ def masterpalabras(palabrarevelada, numerorevelado):
                 intentos_realizados += 1
                 palabra_ingresada = input("Ingresa una palabra de 8 caracteres: ")
                 resultado = ""
-                for e in range(8):
-                    if palabra_ingresada[e] == palabrarevelada[e]:
-                        resultado += 'o'
-                    elif palabra_ingresada[e] in palabrarevelada:
-                        resultado += '-'
-                    else:
-                        resultado += 'x'
-                print(resultado)
-                if palabra_ingresada == palabrarevelada:
-                    print("¡Has adivinado la combinación!")
-                    print("¡En {} intentos!".format(intentos_realizados))
-                    conseguido = True
-                    break
-                elif intentos_realizados == 7:
-                    print("¡Has agotado los intentos!")
-                    break
+                if len(palabra_ingresada) != len(palabrarevelada):
+                    print("Palabra no válida")
+                    intentos_realizados -= 1
+                else:
+                    for e in range(8):
+                        if palabra_ingresada[e] == palabrarevelada[e]:
+                            resultado += 'o'
+                        elif palabra_ingresada[e] in palabrarevelada:
+                            resultado += '-'
+                        else:
+                            resultado += 'x'
+                    print(resultado)
+                    if palabra_ingresada == palabrarevelada:
+                        print("¡Has adivinado la combinación!")
+                        print("¡En {} intentos!".format(intentos_realizados))
+                        conseguido = True
+                        break
+                    elif intentos_realizados == 7:
+                        print("¡Has agotado los intentos!")
+                        break
 
         fin = time.time()
         tiempo_total = fin - tiempo
         volver = input("¿Quieres volver a jugar, si o no?(S/N): ")
-        if jugar == "N":
+        if jugar == "N" or jugar == "n":
             combinacion = numerorevelado
         else:
             combinacion = palabrarevelada
-        datos_partida = {"fecha": fecha, "numero": numero_partidas, "combinación": combinacion,
-                         "intentos": intentos_realizados,
-                         "tiempo": tiempo_total, "conseguido": conseguido}
-        print(datos_partida)
+        lista_final = [fecha, numero_partidas, combinacion, intentos_realizados, tiempo_total, conseguido]
+        lista_final2 = [nombre, fecha, numero_partidas, combinacion, intentos_realizados, tiempo_total, conseguido]
+        lista_final3.append(lista_final2)
+        with open("partidas.txt", "a") as partidas:
+            partidas.writelines(f"{lista_final}\n")
         palabrarevelada, numerorevelado = generacionocultacion()
 
 
@@ -150,6 +165,37 @@ def masterpalabras(palabrarevelada, numerorevelado):
 palabrarevelada, numerorevelado = generacionocultacion()
 masterpalabras(palabrarevelada, numerorevelado)
 
-
 def ranking():
-    pass
+    lista_final4 = []
+    try:
+        with open("ranking.dat", "rb") as datos2:
+            lista_final4 = pickle.load(datos2)
+        lista_final4.append(lista_final3)
+        with open("ranking.dat", "wb") as datos:
+            pickle.dump(lista_final4, datos)
+    except:
+        pass
+    with open("ranking.dat", "wb") as datos:
+        pickle.dump(lista_final3, datos)
+    nombres = []
+    fechas = []
+    numero_part = []
+    combinaciones = []
+    intento = []
+    tiempos = []
+    conseguidos = []
+    for u in lista_final4:
+        nombres.append(u[0])
+        fechas.append(u[1])
+        numero_part.append(u[2])
+        combinaciones.append(u[3])
+        intento.append(u[4])
+        tiempos.append(u[5])
+        conseguidos.append(u[6])
+    datos = {'Nombre':nombres, 'fecha':fechas}
+
+    df = pd.DataFrame(datos)
+
+    print(df)
+ranking()
+
