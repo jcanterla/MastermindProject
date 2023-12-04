@@ -116,7 +116,8 @@ def masterpalabras(palabrarevelada, numerorevelado):
             while intentos > intentos_realizados:
                 intentos_realizados += 1
                 numero_ingresado = input("\n"+"\t"*8+"Ingresa un número de 5 cifras: ")
-                resultado = "\t"*12+""
+                resultado = ""
+                print(f"\t\t\t\t\t\t\t\tPropuesto          Resultado")
                 # Introduccion erronea de longitud de numero permitido
                 if len(numero_ingresado) != len(numerorevelado):
                     print("\t"*11+"Número no válido")
@@ -129,11 +130,11 @@ def masterpalabras(palabrarevelada, numerorevelado):
                             resultado += '-'
                         else:
                             resultado += 'x'
-                    print(resultado)
+                    print("\t\t\t\t\t\t\t\t" + numero_ingresado + "\t\t\t\t" + resultado)
                     # Adivinación del numero
                     if numero_ingresado == numerorevelado:
-                        print("¡Has adivinado la combinación!")
-                        print("¡En {} intentos!".format(intentos_realizados))
+                        print("\n" + "\t" * 10 + "¡Has adivinado la combinación!")
+                        print("\t"*12+"¡En {} intentos!\n".format(intentos_realizados))
                         conseguido = True
                         break
                     # Error a la hora de descubrir el numero
@@ -150,7 +151,8 @@ def masterpalabras(palabrarevelada, numerorevelado):
             while intentos > intentos_realizados:
                 intentos_realizados += 1
                 palabra_ingresada = input("\n"+"\t"*8+"Ingresa una palabra de 8 caracteres: ")
-                resultado = "\t"*12+""
+                resultado =""
+                print(f"\t\t\t\t\t\t\t\tPropuesto          Resultado")
                 # Longitud de palabra erronea
                 if len(palabra_ingresada) != len(palabrarevelada):
                     print("\t"*11+"Palabra no válida")
@@ -164,7 +166,7 @@ def masterpalabras(palabrarevelada, numerorevelado):
                             resultado += '-'
                         else:
                             resultado += 'x'
-                    print(resultado)
+                    print("\t\t\t\t\t\t\t\t" + palabra_ingresada + "\t\t\t" + resultado)
                     # Combinacion correcta
                     if palabra_ingresada == palabrarevelada:
                         print("\n"+"\t"*10+"¡Has adivinado la combinación!")
