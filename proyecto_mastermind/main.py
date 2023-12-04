@@ -8,9 +8,9 @@ from stegano import lsb
 import pickle
 
 from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import letter
+from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib import colors
-
+from reportlab.platypus import Table, TableStyle
 
 img = cv2.imread("mastermind_logorigin.png")
 
@@ -82,6 +82,8 @@ def masterpalabras(palabrarevelada, numerorevelado):
     lista_final3 = []
     fecha = date.today()
     print("\033[1m" + "APLICACIÓN MASTERMIND" + "\033[0m")
+    with open("partidas.txt", "w") as f:
+        pass
     nombre = input("Tu nickname, por favor: ")
     jugar = ""
     while jugar != "P" and jugar != "p" and jugar != "N" and jugar != "n":
@@ -119,6 +121,7 @@ def masterpalabras(palabrarevelada, numerorevelado):
                         break
                     elif intentos_realizados == 4:
                         print("¡Has agotado los intentos!")
+                        numero_partidas += 1
                         conseguido = False
                         break
 
@@ -148,6 +151,7 @@ def masterpalabras(palabrarevelada, numerorevelado):
                         break
                     elif intentos_realizados == 7:
                         print("¡Has agotado los intentos!")
+                        numero_partidas += 1
                         conseguido = False
                         break
 
@@ -162,15 +166,18 @@ def masterpalabras(palabrarevelada, numerorevelado):
         if conseguido == True:
             lista_final2 = [nombre, fecha, numero_partidas, combinacion, intentos_realizados, tiempo_total, conseguido]
             lista_final3.append(lista_final2)
+            numero_partidas2 = lista_final2[2]
         with open("partidas.txt", "a") as partidas:
-            partidas.writelines(f"{lista_final}\n")
+            linea = ",".join(map(str, lista_final))
+            partidas.write(linea + "\n")
         palabrarevelada, numerorevelado = generacionocultacion()
+    return nombre, numero_partidas2, intentos_realizados, tiempo_total
 
 
 
 
 
-def ranking():
+def ranking(intentos_realizados, tiempo_total):
     lista_final4 = []
     lista_final4.append(lista_final3)
     nombres = []
@@ -184,7 +191,24 @@ def ranking():
     try:
         with open("ranking.dat", "rb") as datos2:
             lista_final4 = pickle.load(datos2)
-        lista_final4.append(lista_final3)
+        for h in range(len(lista_final4)):
+            lista1 = lista_final4[h]
+            intentoss = lista1[4]
+            if intentoss < intentos_realizados:
+               lista_final4.insert(h, lista_final3)
+               break
+            elif intentoss == intentos_realizados:
+                tiempoo = lista1[5]
+                if tiempoo < tiempo_total:
+                    lista_final4.insert(h,lista_final3)
+                    break
+                else:
+                    lista_final4.append(lista_final3)
+                    break
+            else:
+                lista_final4.append(lista_final3)
+                break
+
         with open("ranking.dat", "wb") as datos:
             pickle.dump(lista_final4, datos)
     except:
@@ -209,17 +233,64 @@ def ranking():
     print(df_ordenado.head(10).to_string(index=False))
 
 
-def pdf():
+def pdf(nombre2, numero_partidas3):
+    filastabla = []
+    estilos = getSampleStyleSheet()
+    estilo_negrita = estilos['BodyText'].clone('estilo_negrita')
+    estilo_negrita.fontName = 'Helvetica-Bold'
+    estilo_negrita.fontSize = 20
+
+    x_titulo, y_titulo, width_titulo, height_titulo = 90, 570, 450, 25
+
     doc = canvas.Canvas("partidas.pdf")
     doc.drawInlineImage("mastermind.png", 150, 600, width=300, height=200)
-    color_subrayado = colors.gray
+    doc.setFont(estilo_negrita.fontName, estilo_negrita.fontSize)
+    doc.setFillColor(colors.lightgrey)
+    doc.rect(x_titulo, y_titulo, width_titulo, height_titulo, fill=True, stroke=0)
     doc.setFillColor(colors.black)
-    doc.setFont("Helvetica", 14)
-    doc.drawCentredString(165, 550, "INFORME DE LA PARTIDAS")
-    doc.rect(165, 550, doc.stringWidth("INFORME DE LAS PARTIDAS", "Helvetica-Bold", 20), 20, fill=True)
-    doc.setFillColor(color_subrayado)
-    doc.save()
+    doc.drawString(170, 575, "INFORME DE LAS PARTIDAS")
 
+    estilo_texto = estilos['BodyText'].clone('estilo_texto')
+    estilo_texto.fontSize = 12
+    doc.setFont(estilos['BodyText'].fontName, estilos['BodyText'].fontSize)
+    doc.setFont(estilo_texto.fontName, estilo_texto.fontSize)
+    doc.drawString(170, 540, f"El jugador {nombre2} ha jugado las siguientes {numero_partidas3} partidas: ")
+    doc.setFont(estilos['BodyText'].fontName, estilos['BodyText'].fontSize)
+
+    with open("partidas.txt", "r") as partidas:
+        partidas2 = partidas.readlines()
+    datos1 = [linea.strip().split(',') for linea in partidas2]
+    filastabla.append(["fecha_hora", "número", "combinación", "intentos", "tiempo(secs)", "conseguido"])
+    datos1.sort(key=lambda x: float(x[4]))
+    mejor_partida = datos1[0]
+    filastabla.extend(datos1)
+    tabla = Table(filastabla)
+
+
+    estilo_tabla = TableStyle([
+        ('GRID', (0, 0), (-1, -1), 1, colors.black),
+        ('BACKGROUND', (0, 0), (-1, 0), colors.white),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.blue),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.white),
+        ('TEXTCOLOR', (0, 1), (-1, -1), colors.orange),
+    ])
+    tabla.setStyle(estilo_tabla)
+
+    tabla.wrapOn(doc, 0, 0)
+    tabla.drawOn(doc, 100, 480)
+
+    doc.drawString(100, 400 ,"Su mejor partida ha sido:")
+    doc.drawString(100, 380, f"{mejor_partida[0]}---{mejor_partida[1]}---{mejor_partida[2]}---{mejor_partida[4]}---{mejor_partida[5]}")
+    with open("ranking.dat", "rb") as f:
+        rankings = pickle.load(f)
+        for cadarank in rankings:
+            pass
+
+    doc.save()
+def salir():
+    pass
 while True:
     print("APLICACIÓN MASTENMIND")
     print("1) Creación del logo de equipo")
@@ -237,11 +308,11 @@ while True:
         generacionocultacion()
     elif opcion == "3":
         palabrarevelada, numerorevelado = generacionocultacion()
-        masterpalabras(palabrarevelada, numerorevelado)
+        nombre,numero_partidas2, intentos_realizados, tiempo_total = masterpalabras(palabrarevelada, numerorevelado)
     elif opcion == "4":
-        ranking()
+        ranking(intentos_realizados, tiempo_total)
     elif opcion == "5":
-        pdf()
+        pdf(nombre, numero_partidas2)
     elif opcion == "6":
         salir()
     else:
