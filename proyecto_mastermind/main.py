@@ -218,13 +218,14 @@ def ranking():
     return df_ordenado
 def pdf(nombre2, numero_partidas3, df_ordenado, tiempo_total):
     filastabla = []
+    # Definimos los estilos del  título
     estilos = getSampleStyleSheet()
     estilo_negrita = estilos['BodyText'].clone('estilo_negrita')
     estilo_negrita.fontName = 'Helvetica-Bold'
     estilo_negrita.fontSize = 20
-
+    # Definimos las posiciones del titulo y del cuadro gris
     x_titulo, y_titulo, width_titulo, height_titulo = 90, 570, 450, 25
-
+    # Creamos el PDF y los diferentes titulos e imágenes
     doc = canvas.Canvas("partidas.pdf")
     doc.drawInlineImage("mastermind.png", 150, 600, width=300, height=200)
     doc.setFont(estilo_negrita.fontName, estilo_negrita.fontSize)
@@ -239,7 +240,7 @@ def pdf(nombre2, numero_partidas3, df_ordenado, tiempo_total):
     doc.setFont(estilo_texto.fontName, estilo_texto.fontSize)
     doc.drawString(170, 540, f"El jugador {nombre2} ha jugado las siguientes {numero_partidas3} partidas: ")
     doc.setFont(estilos['BodyText'].fontName, estilos['BodyText'].fontSize)
-
+    # Cargamos los datos de las partidas para la tabla
     with open("partidas.txt", "r") as partidas:
         partidas2 = partidas.readlines()
     datos1 = [linea.strip().split(',') for linea in partidas2]
@@ -249,7 +250,7 @@ def pdf(nombre2, numero_partidas3, df_ordenado, tiempo_total):
     filastabla.extend(datos1)
     tabla = Table(filastabla)
 
-
+    # Hacemos los estilos de la tabla
     estilo_tabla = TableStyle([
         ('GRID', (0, 0), (-1, -1), 1, colors.black),
         ('BACKGROUND', (0, 0), (-1, 0), colors.white),
@@ -261,9 +262,11 @@ def pdf(nombre2, numero_partidas3, df_ordenado, tiempo_total):
     ])
     tabla.setStyle(estilo_tabla)
 
+    # Dibujamos la tabla
     tabla.wrapOn(doc, 0, 0)
     tabla.drawOn(doc, 100, 470)
 
+    #Definimos la mejor partida y la posición del ranking
     doc.drawString(100, 400 ,"Su mejor partida ha sido:")
     doc.drawString(100, 380, f"{mejor_partida[0]}---{mejor_partida[1]}---{mejor_partida[2]}---{mejor_partida[4]}---{mejor_partida[5]}")
     lista_ordenada = df_ordenado.to_records(index=False).tolist()
