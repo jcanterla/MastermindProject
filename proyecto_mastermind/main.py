@@ -289,9 +289,9 @@ def pdf(nombre2, numero_partidas3):
             pass
 
     doc.save()
-def salir():
-    pass
-while True:
+
+opcion1 = 0
+while opcion1 != 6:
     print("APLICACIÓN MASTENMIND")
     print("1) Creación del logo de equipo")
     print("2) Generación y ocultado de la combinación")
@@ -314,7 +314,7 @@ while True:
     elif opcion == "5":
         pdf(nombre, numero_partidas2)
     elif opcion == "6":
-        salir()
+        opcion1 = 6
     else:
         print("Opción inválida. Intente nuevamente.")
 
