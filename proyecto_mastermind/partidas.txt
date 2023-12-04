@@ -1,0 +1,10 @@
+2023-12-04,1,zalamero,1,3.36,True
+2023-12-04,2,recuerdo,1,3.24,True
+2023-12-04,1,cuchillo,4,57.76,True
+2023-12-04,2,cilantro,3,38.94,True
+2023-12-04,1,recuerdo,4,35.74,True
+2023-12-04,2,aguacate,5,30.42,True
+2023-12-04,3,soldador,5,26.82,True
+2023-12-04,1,carajote,2,35.22,True
+2023-12-04,1,cilantro,6,37.62,True
+2023-12-04,1,carajote,3,44.51,True
