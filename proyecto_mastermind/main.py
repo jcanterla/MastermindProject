@@ -1,23 +1,32 @@
+# Importamos cv2 para lectura de la imagen
 import cv2
+# Importamos random para que nos seleccione un numero aleatorio o una palabra aleatoria
 import random
+# Importamos para poder trabajar con datos de tipo fecha
 from datetime import date
 import time
 
+# Importamos para poder realizar tablas en el ranking
 import pandas as pd
+# Importamos para realizar la ocultacion
 from stegano import lsb
+# Importamos para la lectura del fichero binario
 import pickle
 
+# Importamos para la realizacion del pdf
 from reportlab.pdfgen import canvas
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib import colors
 from reportlab.platypus import Table, TableStyle
 
-img = cv2.imread("mastermind_logorigin.png")
+# Función de modificar la imagen de equipo
 
 
 def cambio_imagen():
+    img = cv2.imread("mastermind_logorigin.png")
     font = cv2.FONT_HERSHEY_DUPLEX
     font2 = cv2.FONT_HERSHEY_SCRIPT_COMPLEX
+    # Colocar la imagen con sus respectivos tamaños
     posicion = (105, 55)
     posicion2 = (355, 55)
     posicion3 = (65, 310)
@@ -44,7 +53,7 @@ def cambio_imagen():
 
 
 def generacionocultacion():
-
+    # Generación de un numero aleatorio de 5 cifras
     numaleatorio = {
         1:random.randint(0,9),
         2:random.randint(0,9),
@@ -53,6 +62,7 @@ def generacionocultacion():
         5:random.randint(0,9)
     }
     list = []
+    # Obtención de una palabra aleatoria del fichero palabras.dat
     for a in range(1,6):
         numero = numaleatorio.get(a)
         list.append(numero)
@@ -62,7 +72,7 @@ def generacionocultacion():
     elemento = random.randint(1,24)
 
     palabra2 = palabra[elemento].decode("utf-8").strip()
-
+    # Ocultación de las palabras en la imagen
     secreto = lsb.hide("mastermind.png", palabra2)
     secreto2 = lsb.hide("mastermind.png", numerogenerado)
     secreto.save("mastermindsecreto.png")
@@ -79,29 +89,35 @@ def masterpalabras(palabrarevelada, numerorevelado):
     global lista_final3
     lista_final3 = []
     fecha = date.today()
+    # Menu del juego masterpalabras
     print("\033[1m" + "\n\n" + "\t"*11 + "APLICACIÓN MASTERMIND\n" + "\033[0m")
     print("\t"*10 +"Se ha recuperado la combinación\n")
     nombre = input("\t"*10 +" Tu nickname, por favor: ")
     print()
     print("\t"*10 + f"¡Comienza el juego para {nombre}!\n\n")
     jugar = ""
+    # Elegir que tipo de modo jugar
     while jugar != "P" and jugar != "p" and jugar != "N" and jugar != "n":
         jugar = input("\t"*8 +"¿Quieres jugar a palabras o a números? (P/N): ")
     print("\033[1m" + "\n\n\n" + "\t" * 11 + "APLICACIÓN MASTERMIND\n" + "\033[0m")
     volver = "S"
     numero_partidas = 0
     conseguido = False
+    # Bucle en caso de querer volver a jugar al modo seleccionado
     while volver == "S" or volver == "s":
         numero_partidas += 1
         intentos_realizados = 0
         tiempo = time.time()
+        # Modo de juego numerico
         if jugar == "N" or jugar == "n":
             intentos = 4
             print("\t" * 11 + "¡Tienes 7 intentos!" + "\n" + "\t" * 12 + "¡Comenzamos!")
+            # Intentos a poder realizar
             while intentos > intentos_realizados:
                 intentos_realizados += 1
                 numero_ingresado = input("\n"+"\t"*8+"Ingresa un número de 5 cifras: ")
                 resultado = "\t"*12+""
+                # Introduccion erronea de longitud de numero permitido
                 if len(numero_ingresado) != len(numerorevelado):
                     print("\t"*11+"Número no válido")
                     intentos_realizados -= 1
@@ -114,28 +130,33 @@ def masterpalabras(palabrarevelada, numerorevelado):
                         else:
                             resultado += 'x'
                     print(resultado)
+                    # Adivinación del numero
                     if numero_ingresado == numerorevelado:
                         print("¡Has adivinado la combinación!")
                         print("¡En {} intentos!".format(intentos_realizados))
                         conseguido = True
                         break
+                    # Error a la hora de descubrir el numero
                     elif intentos_realizados == 4:
                         print("¡Has agotado los intentos!")
                         conseguido = False
                         break
 
-
+        # Jugar en modo palabras
         elif jugar == "P" or jugar == "p":
             intentos = 7
             print("\t" * 11 + "¡Tienes 4 intentos!" + "\n" + "\t" * 12 + "¡Comenzamos!")
+            # Intentos a poder realizar
             while intentos > intentos_realizados:
                 intentos_realizados += 1
                 palabra_ingresada = input("\n"+"\t"*8+"Ingresa una palabra de 8 caracteres: ")
                 resultado = "\t"*12+""
+                # Longitud de palabra erronea
                 if len(palabra_ingresada) != len(palabrarevelada):
                     print("\t"*11+"Palabra no válida")
                     intentos_realizados -= 1
                 else:
+                    # Descubrir palabras acertadas, equivocadas o en posicion diferente
                     for e in range(8):
                         if palabra_ingresada[e] == palabrarevelada[e]:
                             resultado += 'o'
@@ -144,31 +165,38 @@ def masterpalabras(palabrarevelada, numerorevelado):
                         else:
                             resultado += 'x'
                     print(resultado)
+                    # Combinacion correcta
                     if palabra_ingresada == palabrarevelada:
                         print("\n"+"\t"*10+"¡Has adivinado la combinación!")
                         print("\t"*12+"¡En {} intentos!\n".format(intentos_realizados))
                         conseguido = True
                         break
+                    # Combinacion erronea
                     elif intentos_realizados == 7:
                         print("\t"*9+"¡Has agotado los intentos!\n")
                         conseguido = False
                         break
-
         fin = time.time()
         tiempo_total = fin - tiempo
+        # Volver a jugar
         volver = input("\t"*9+"¿Quieres volver a jugar, sí o no?(S/N): ")
+        # Volver a jugar
         if jugar == "N" or jugar == "n":
             combinacion = numerorevelado
         else:
             combinacion = palabrarevelada
+        # Almacenar en lista los datos del jugador
         lista_final = [fecha, numero_partidas, combinacion, intentos_realizados, round(tiempo_total, 2), conseguido]
+        # Si acierta la combinación almacenar los datos en la lista_final2
         if conseguido == True:
             lista_final2 = [nombre, fecha, numero_partidas, combinacion, intentos_realizados, round(tiempo_total, 2), conseguido]
             lista_final3.append(lista_final2)
             numero_partidas2 = lista_final2[2]
+        # Modificacion de partidas.txt añadiendo las nuevas listas
         with open("partidas.txt", "a") as partidas:
             linea = ",".join(map(str, lista_final))
             partidas.write(linea + "\n")
+        # Volver a generar palabra y numero para poder jugar de nuevo
         palabrarevelada, numerorevelado = generacionocultacion()
     return nombre, numero_partidas2, tiempo_total
 
@@ -177,7 +205,9 @@ def masterpalabras(palabrarevelada, numerorevelado):
 
 
 def ranking():
+    # Creación del ranking
     lista_final4 = []
+    # Añadir las listas nuevas jugadas al ranking
     lista_final4.append(lista_final3)
     nombres = []
     fechas = []
@@ -187,6 +217,7 @@ def ranking():
     tiempos = []
     conseguidos = []
 
+    # En caso de ya existir el archivo trabajar con este
     try:
         with open("ranking.dat", "rb") as datos2:
             lista_final4 = pickle.load(datos2)
@@ -195,9 +226,10 @@ def ranking():
         with open("ranking.dat", "wb") as datos:
             pickle.dump(lista_final4, datos)
     except:
+        # Si no existe el archivo que trabajar crearlo
         with open("ranking.dat", "wb") as datos:
             pickle.dump(lista_final4, datos)
-
+    # Hacer una lista con cada elemento de las listas del ranking.dat
     for u in lista_final4:
         for e in u:
             nombres.append(e[0])
@@ -207,15 +239,18 @@ def ranking():
             intento.append(e[4])
             tiempos.append(e[5])
             conseguidos.append(e[6])
-
+    # Crar mediante pandas la tabla
     datos = {'Nombre': nombres, 'fecha': fechas, 'numero': numero_part, 'combinacion': combinaciones,
              'intento': intento, 'tiempo': tiempos, 'conseguido': conseguidos}
-
+    # Lectura de la tabla con pandas
     df = pd.DataFrame(datos)
     df_ordenado = df.sort_values(by=['intento', 'tiempo'])
+    # Mostrar los 10 primeros elementos de la tabla
     print(df_ordenado.head(10).to_string(index=False).center(80))
 
     return df_ordenado
+
+
 def pdf(nombre2, numero_partidas3, df_ordenado, tiempo_total):
     filastabla = []
     # Definimos los estilos del  título
